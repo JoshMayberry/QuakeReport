@@ -56,7 +56,7 @@ public final class QueryUtils {
                 earthquakes.add(new Earthquake(
                         properties.getString("mag"),
                         properties.getString("place"),
-                        properties.getString("time")));
+                        properties.getLong("time")));
             }
         } catch (JSONException e) {
             Log.e("QueryUtils", "Problem parsing the earthquake JSON results", e);

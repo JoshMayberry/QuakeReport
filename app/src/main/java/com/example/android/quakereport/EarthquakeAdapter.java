@@ -30,6 +30,7 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
         EathquakeListItemBinding binding = EathquakeListItemBinding.inflate(inflater,null, false);
 
         binding.date.setText(earthquake.getDate());
+        binding.time.setText(earthquake.getTime());
         binding.location.setText(earthquake.getLocation());
         binding.magnitude.setText(earthquake.getMagnitude());
 

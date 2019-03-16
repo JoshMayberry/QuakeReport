@@ -1,15 +1,22 @@
 package com.example.android.quakereport;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Earthquake {
+
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("LLL dd, yyyy");
+    private static final SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
 
     private String magnitude;
     private String location;
-    private String date;
+    private long dateRaw;
+    private Date date;
 
-    Earthquake(String magnitude, String location, String date) {
-        this.magnitude = magnitude;
-        this.location = location;
-        this.date = date;
+    Earthquake(String magnitude, String location, long dateRaw) {
+        setMagnitude(magnitude);
+        setLocation(location);
+        setDateRaw(dateRaw);
     }
 
     public String getMagnitude() {
@@ -30,12 +37,21 @@ public class Earthquake {
         return this;
     }
 
-    public String getDate() {
-        return date;
+    public long getDateRaw() {
+        return dateRaw;
     }
 
-    public Earthquake setDate(String date) {
-        this.date = date;
+    public Earthquake setDateRaw(long dateRaw) {
+        this.dateRaw = dateRaw;
+        this.date = new Date(dateRaw);
         return this;
+    }
+
+    public String getDate() {
+        return dateFormat.format(date);
+    }
+
+    public String getTime() {
+        return timeFormat.format(date);
     }
 }
