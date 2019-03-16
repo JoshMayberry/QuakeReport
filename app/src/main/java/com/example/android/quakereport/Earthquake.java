@@ -19,15 +19,25 @@ public class Earthquake {
     private String location;
     private String nearBy;
     private long dateRaw;
+    private String url;
     private Date date;
 
     private Context context;
 
-    Earthquake(Context context, double magnitude, String location, long dateRaw) {
+    Earthquake(Context context, double magnitude, String location, long dateRaw, String url) {
         this.context = context;
         setMagnitudeRaw(magnitude);
         setLocation(location);
         setDateRaw(dateRaw);
+        setUrl(url);
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getMagnitude() {
