@@ -31,6 +31,7 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
 
         binding.date.setText(earthquake.getDate());
         binding.time.setText(earthquake.getTime());
+        binding.nearBy.setText(earthquake.getNearBy());
         binding.location.setText(earthquake.getLocation());
         binding.magnitude.setText(earthquake.getMagnitude());
 

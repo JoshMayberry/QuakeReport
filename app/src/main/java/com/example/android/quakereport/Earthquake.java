@@ -10,6 +10,7 @@ public class Earthquake {
 
     private String magnitude;
     private String location;
+    private String nearBy;
     private long dateRaw;
     private Date date;
 
@@ -28,13 +29,28 @@ public class Earthquake {
         return this;
     }
 
+    public Earthquake setLocation(String location) {
+        String[] locationList = location.split(" of ");
+
+        switch (locationList.length) {
+            case 2:
+                this.nearBy = locationList[0];
+                this.location = locationList[1];
+                break;
+            default:
+                this.nearBy = "Near By";
+                this.location = location;
+        }
+        return this;
+
+    }
+
     public String getLocation() {
         return location;
     }
 
-    public Earthquake setLocation(String location) {
-        this.location = location;
-        return this;
+    public String getNearBy() {
+        return nearBy;
     }
 
     public long getDateRaw() {
