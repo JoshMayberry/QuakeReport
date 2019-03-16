@@ -1,5 +1,8 @@
 package com.example.android.quakereport;
 
+import android.content.Context;
+import android.support.v4.content.ContextCompat;
+
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,13 +14,17 @@ public class Earthquake {
     private static final DecimalFormat magnitudeFormat = new DecimalFormat("0.0");
 
     private double magnitudeRaw;
+    private int magnitudeColor;
     private String magnitude;
     private String location;
     private String nearBy;
     private long dateRaw;
     private Date date;
 
-    Earthquake(double magnitude, String location, long dateRaw) {
+    private Context context;
+
+    Earthquake(Context context, double magnitude, String location, long dateRaw) {
+        this.context = context;
         setMagnitudeRaw(magnitude);
         setLocation(location);
         setDateRaw(dateRaw);
@@ -27,6 +34,48 @@ public class Earthquake {
         return magnitude;
     }
 
+    public int getMagnitudeColor() {
+        return magnitudeColor;
+    }
+
+    public void updateMagnitudeColor() {
+        int magnitudeColorResourceId;
+        switch ((int) Math.floor(magnitudeRaw)) {
+            case 0:
+            case 1:
+                magnitudeColorResourceId = R.color.magnitude1;
+                break;
+            case 2:
+                magnitudeColorResourceId = R.color.magnitude2;
+                break;
+            case 3:
+                magnitudeColorResourceId = R.color.magnitude3;
+                break;
+            case 4:
+                magnitudeColorResourceId = R.color.magnitude4;
+                break;
+            case 5:
+                magnitudeColorResourceId = R.color.magnitude5;
+                break;
+            case 6:
+                magnitudeColorResourceId = R.color.magnitude6;
+                break;
+            case 7:
+                magnitudeColorResourceId = R.color.magnitude7;
+                break;
+            case 8:
+                magnitudeColorResourceId = R.color.magnitude8;
+                break;
+            case 9:
+                magnitudeColorResourceId = R.color.magnitude9;
+                break;
+            default:
+                magnitudeColorResourceId = R.color.magnitude10plus;
+                break;
+        }
+        magnitudeColor = ContextCompat.getColor(context, magnitudeColorResourceId);
+    }
+
     public double getMagnitudeRaw() {
         return magnitudeRaw;
     }
@@ -34,6 +83,7 @@ public class Earthquake {
     public Earthquake setMagnitudeRaw(double magnitudeRaw) {
         this.magnitudeRaw = magnitudeRaw;
         this.magnitude = magnitudeFormat.format(magnitudeRaw);
+        updateMagnitudeColor();
         return this;
     }
 

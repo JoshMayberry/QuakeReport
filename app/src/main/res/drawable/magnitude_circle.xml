@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Background circle for the magnitude value -->
+<!-- See: https://developer.android.com/guide/topics/resources/drawable-resource.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics#Shape -->
+<!-- See: https://guides.codepath.com/android/Drawables -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@color/magnitude1" />
+    <size
+        android:width="36dp"
+        android:height="36dp" />
+    <corners android:radius="18dp" />
+</shape>
