@@ -1,5 +1,6 @@
 package com.example.android.quakereport;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -7,15 +8,17 @@ public class Earthquake {
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("LLL dd, yyyy");
     private static final SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
+    private static final DecimalFormat magnitudeFormat = new DecimalFormat("0.0");
 
+    private double magnitudeRaw;
     private String magnitude;
     private String location;
     private String nearBy;
     private long dateRaw;
     private Date date;
 
-    Earthquake(String magnitude, String location, long dateRaw) {
-        setMagnitude(magnitude);
+    Earthquake(double magnitude, String location, long dateRaw) {
+        setMagnitudeRaw(magnitude);
         setLocation(location);
         setDateRaw(dateRaw);
     }
@@ -24,8 +27,13 @@ public class Earthquake {
         return magnitude;
     }
 
-    public Earthquake setMagnitude(String magnitude) {
-        this.magnitude = magnitude;
+    public double getMagnitudeRaw() {
+        return magnitudeRaw;
+    }
+
+    public Earthquake setMagnitudeRaw(double magnitudeRaw) {
+        this.magnitudeRaw = magnitudeRaw;
+        this.magnitude = magnitudeFormat.format(magnitudeRaw);
         return this;
     }
 
