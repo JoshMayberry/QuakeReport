@@ -15,23 +15,25 @@
  */
 package com.example.android.quakereport;
 
+//Remember to import the right Loader class. It should be import android.content.AsyncTaskLoader; instead of import android.support.v4.content.AsyncTaskLoader;.
+//See: https://github.com/udacity/ud843-QuakeReport/commit/78e07dce2ab5ed3a7df2b254b853a7cc7ad0b0e8
+import android.app.LoaderManager;
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Intent;
+import android.content.Loader;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EarthquakeActivity extends AppCompatActivity {
+public class EarthquakeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Earthquake>> {
 
+    private static final int EARTHQUAKE_LOADER_ID = 1;
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
     private EarthquakeAdapter earthquakeAdapter;
 
@@ -55,48 +57,28 @@ public class EarthquakeActivity extends AppCompatActivity {
             }
         });
 
-        EarthquakeAsyncTask task = new EarthquakeAsyncTask();
-        task.execute(QueryUtils.SAMPLE_JSON_URL);
+        getLoaderManager().initLoader(EARTHQUAKE_LOADER_ID, null, this);
     }
 
-    private class EarthquakeAsyncTask extends AsyncTask<String, Void, List<Earthquake>> {
-        private final String LOG_TAG = EarthquakeAsyncTask.class.getSimpleName();
+    //See: https://developer.android.com/guide/components/loaders.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics#starting
+    //See: https://developer.android.com/reference/android/app/LoaderManager.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics
+    //See: https://developer.android.com/reference/android/app/LoaderManager.LoaderCallbacks.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics
+    //Use: https://www.concretepage.com/android/android-asynctaskloader-example-with-listview-and-baseadapter
+    @Override
+    public Loader<List<Earthquake>> onCreateLoader(int id, Bundle args) {
+        return new EarthquakeLoader(this, QueryUtils.SAMPLE_JSON_URL);
+    }
 
-        @Override
-        protected List<Earthquake> doInBackground(String... urlList) {
-            // Don't perform the request if there are no URLs, or the first URL is null.
-            if (urlList.length < 1 || urlList[0] == null) {
-                return null;
-            }
-
-            List<Earthquake> earthquakeList = new ArrayList<>();
-            // Perform the HTTP request for earthquake data and process the response.
-            for (String url : urlList) {
-                String jsonResponse = null;
-                try {
-                    jsonResponse = QueryUtils.makeHttpRequest(url);
-                } catch (IOException e) {
-                    Log.e(LOG_TAG, "Error closing input stream", e);
-                }
-                if (jsonResponse == null) {
-                    continue;
-                }
-                List<Earthquake> earthquakeList_2 = QueryUtils.parseJSON(jsonResponse);
-                if (earthquakeList_2 == null) {
-                    continue;
-                }
-                earthquakeList.addAll(earthquakeList_2);
-            }
-
-            return earthquakeList;
+    @Override
+    public void onLoadFinished(Loader<List<Earthquake>> loader, List<Earthquake> earthquakeList) {
+        earthquakeAdapter.clear();
+        if (earthquakeList != null && !earthquakeList.isEmpty()) {
+            earthquakeAdapter.addAll(earthquakeList);
         }
+    }
 
-        @Override
-        protected void onPostExecute(List<Earthquake> earthquakeList) {
-            earthquakeAdapter.clear();
-            if (earthquakeList != null && !earthquakeList.isEmpty()) {
-                earthquakeAdapter.addAll(earthquakeList);
-            }
-        }
+    @Override
+    public void onLoaderReset(Loader<List<Earthquake>> loader) {
+        earthquakeAdapter.clear();
     }
 }
