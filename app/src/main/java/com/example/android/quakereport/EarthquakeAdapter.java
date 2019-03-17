@@ -2,6 +2,7 @@ package com.example.android.quakereport;
 
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +38,7 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
         binding.magnitude.setText(earthquake.getMagnitude());
 
         GradientDrawable magnitudeCircle = (GradientDrawable) binding.magnitude.getBackground();
-        magnitudeCircle.setColor(earthquake.getMagnitudeColor());
+        magnitudeCircle.setColor(ContextCompat.getColor(getContext(), earthquake.getMagnitudeColor()));
 
         return binding.getRoot();
     }

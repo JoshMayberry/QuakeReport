@@ -22,82 +22,77 @@ public class Earthquake {
     private String url;
     private Date date;
 
-    private Context context;
-
-    Earthquake(Context context, double magnitude, String location, long dateRaw, String url) {
-        this.context = context;
+    Earthquake(double magnitude, String location, long dateRaw, String url) {
         setMagnitudeRaw(magnitude);
         setLocation(location);
         setDateRaw(dateRaw);
         setUrl(url);
     }
 
-    public String getUrl() {
+    String getUrl() {
         return url;
     }
 
-    public void setUrl(String url) {
+    void setUrl(String url) {
         this.url = url;
     }
 
-    public String getMagnitude() {
+    String getMagnitude() {
         return magnitude;
     }
 
-    public int getMagnitudeColor() {
+    int getMagnitudeColor() {
         return magnitudeColor;
     }
 
-    public void updateMagnitudeColor() {
-        int magnitudeColorResourceId;
+    void updateMagnitudeColor() {
         switch ((int) Math.floor(magnitudeRaw)) {
             case 0:
             case 1:
-                magnitudeColorResourceId = R.color.magnitude1;
+                magnitudeColor = R.color.magnitude1;
                 break;
             case 2:
-                magnitudeColorResourceId = R.color.magnitude2;
+                magnitudeColor = R.color.magnitude2;
                 break;
             case 3:
-                magnitudeColorResourceId = R.color.magnitude3;
+                magnitudeColor = R.color.magnitude3;
                 break;
             case 4:
-                magnitudeColorResourceId = R.color.magnitude4;
+                magnitudeColor = R.color.magnitude4;
                 break;
             case 5:
-                magnitudeColorResourceId = R.color.magnitude5;
+                magnitudeColor = R.color.magnitude5;
                 break;
             case 6:
-                magnitudeColorResourceId = R.color.magnitude6;
+                magnitudeColor = R.color.magnitude6;
                 break;
             case 7:
-                magnitudeColorResourceId = R.color.magnitude7;
+                magnitudeColor = R.color.magnitude7;
                 break;
             case 8:
-                magnitudeColorResourceId = R.color.magnitude8;
+                magnitudeColor = R.color.magnitude8;
                 break;
             case 9:
-                magnitudeColorResourceId = R.color.magnitude9;
+                magnitudeColor = R.color.magnitude9;
                 break;
             default:
-                magnitudeColorResourceId = R.color.magnitude10plus;
+                magnitudeColor = R.color.magnitude10plus;
                 break;
         }
-        magnitudeColor = ContextCompat.getColor(context, magnitudeColorResourceId);
     }
 
-    public double getMagnitudeRaw() {
+    double getMagnitudeRaw() {
         return magnitudeRaw;
     }
 
-    public Earthquake setMagnitudeRaw(double magnitudeRaw) {
+    Earthquake setMagnitudeRaw(double magnitudeRaw) {
         this.magnitudeRaw = magnitudeRaw;
         this.magnitude = magnitudeFormat.format(magnitudeRaw);
         updateMagnitudeColor();
         return this;
     }
 
-    public Earthquake setLocation(String location) {
+    Earthquake setLocation(String location) {
         String[] locationList = location.split(" of ");
 
         switch (locationList.length) {
@@ -113,29 +108,29 @@ public class Earthquake {
 
     }
 
-    public String getLocation() {
+    String getLocation() {
         return location;
     }
 
-    public String getNearBy() {
+    String getNearBy() {
         return nearBy;
     }
 
-    public long getDateRaw() {
+    long getDateRaw() {
         return dateRaw;
     }
 
-    public Earthquake setDateRaw(long dateRaw) {
+    Earthquake setDateRaw(long dateRaw) {
         this.dateRaw = dateRaw;
         this.date = new Date(dateRaw);
         return this;
     }
 
-    public String getDate() {
+    String getDate() {
         return dateFormat.format(date);
     }
 
-    public String getTime() {
+    String getTime() {
         return timeFormat.format(date);
     }
 }
