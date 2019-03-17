@@ -27,6 +27,14 @@ public class EarthquakeLoader extends AsyncTaskLoader {
     @Nullable
     @Override
     public List<Earthquake> loadInBackground() {
+
+        //FOR DEBUGGING: Show loading wheel
+//        try {
+//            Thread.sleep(3000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
         if (url.isEmpty()) {
             return null;
         }

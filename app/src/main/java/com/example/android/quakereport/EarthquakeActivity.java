@@ -17,22 +17,30 @@ package com.example.android.quakereport;
 
 //Remember to import the right Loader class. It should be import android.content.AsyncTaskLoader; instead of import android.support.v4.content.AsyncTaskLoader;.
 //See: https://github.com/udacity/ud843-QuakeReport/commit/78e07dce2ab5ed3a7df2b254b853a7cc7ad0b0e8
+
 import android.app.LoaderManager;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.databinding.DataBindingUtil;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
+
+import com.example.android.quakereport.databinding.EarthquakeActivityBinding;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class EarthquakeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Earthquake>> {
 
+    private EarthquakeActivityBinding binding;
     private static final int EARTHQUAKE_LOADER_ID = 1;
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
     private EarthquakeAdapter earthquakeAdapter;
@@ -40,13 +48,26 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.earthquake_activity);
+        binding = DataBindingUtil.setContentView(this, R.layout.earthquake_activity);
 
-        ListView earthquakeListView = findViewById(R.id.list);
+        //See: https://developer.android.com/training/basics/network-ops/connecting.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics
+        //Use: https://developer.android.com/training/monitoring-device-state/connectivity-monitoring.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics#DetermineConnection
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo == null || !networkInfo.isConnected()) {
+            binding.loadingIndicator.setVisibility(View.GONE);
+            binding.emptyView.setText(R.string.no_internet_connection);
+            return;
+        }
 
         earthquakeAdapter = new EarthquakeAdapter(EarthquakeActivity.this, new ArrayList<Earthquake>());
-        earthquakeListView.setAdapter(earthquakeAdapter);
-        earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        binding.list.setAdapter(earthquakeAdapter);
+
+        //See: https://developer.android.com/reference/android/widget/AdapterView.html#setEmptyView(android.view.View)
+        //See: https://material.io/design/communication/empty-states.html
+        binding.list.setEmptyView(binding.emptyView);
+
+        binding.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 // Find the current earthquake that was clicked on
@@ -71,6 +92,9 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
 
     @Override
     public void onLoadFinished(Loader<List<Earthquake>> loader, List<Earthquake> earthquakeList) {
+        binding.loadingIndicator.setVisibility(View.GONE);
+        binding.emptyView.setText(R.string.no_earthquakes);
+
         earthquakeAdapter.clear();
         if (earthquakeList != null && !earthquakeList.isEmpty()) {
             earthquakeAdapter.addAll(earthquakeList);
