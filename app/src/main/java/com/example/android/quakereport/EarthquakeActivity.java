@@ -23,13 +23,17 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 
@@ -44,6 +48,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
     private static final int EARTHQUAKE_LOADER_ID = 1;
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
     private EarthquakeAdapter earthquakeAdapter;
+    private static final String USGS_REQUEST_URL = "http://earthquake.usgs.gov/fdsnws/event/1/query";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,13 +86,62 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
         getLoaderManager().initLoader(EARTHQUAKE_LOADER_ID, null, this);
     }
 
-    //See: https://developer.android.com/guide/components/loaders.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics#starting
-    //See: https://developer.android.com/reference/android/app/LoaderManager.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics
-    //See: https://developer.android.com/reference/android/app/LoaderManager.LoaderCallbacks.html?utm_source=udacity&utm_medium=course&utm_campaign=android_basics
+    //See: http://developer.android.com/guide/topics/ui/menus.html
+    //Use: https://github.com/udacity/ud843-QuakeReport/commit/c24e4a9d3226d4aec8c847d454a7eab23872d721
+    @Override
+    // This method initialize the contents of the Activity's options menu
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    // This method is called whenever an item in the options menu is selected.
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingsIntent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    //See: https://developer.android.com/guide/components/loaders.html#starting
+    //See: https://developer.android.com/reference/android/app/LoaderManager.html
+    //See: https://developer.android.com/reference/android/app/LoaderManager.LoaderCallbacks.html
     //Use: https://www.concretepage.com/android/android-asynctaskloader-example-with-listview-and-baseadapter
     @Override
-    public Loader<List<Earthquake>> onCreateLoader(int id, Bundle args) {
-        return new EarthquakeLoader(this, QueryUtils.SAMPLE_JSON_URL);
+    // onCreateLoader instantiates and returns a new Loader for the given ID
+    public Loader<List<Earthquake>> onCreateLoader(int i, Bundle bundle) {
+
+//        return new EarthquakeLoader(this, QueryUtils.SAMPLE_JSON_URL);
+
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // getString retrieves a String value from the preferences. The second parameter is the default value for this preference.
+        String minMagnitude = sharedPrefs.getString(
+                getString(R.string.settings_min_magnitude_key),
+                getString(R.string.settings_min_magnitude_default));
+
+        String orderBy  = sharedPrefs.getString(
+                getString(R.string.settings_order_by_key),
+                getString(R.string.settings_order_by_default));
+
+        // parse breaks apart the URI string that's passed into its parameter
+        Uri baseUri = Uri.parse(USGS_REQUEST_URL);
+
+        // buildUpon prepares the baseUri that we just parsed so we can add query parameters to it
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+
+        // Append query parameter and its value. For example, the `format=geojson`
+        uriBuilder.appendQueryParameter("format", "geojson");
+        uriBuilder.appendQueryParameter("limit", "10");
+        uriBuilder.appendQueryParameter("minmag", minMagnitude);
+        uriBuilder.appendQueryParameter("orderby", orderBy);
+
+        // Return the completed uri `http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&limit=10&minmag=minMagnitude&orderby=time
+        return new EarthquakeLoader(this, uriBuilder.toString());
     }
 
     @Override
